@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using BookingSystem.DatabaseAccess;
+using BookingSystem.Interfaces.IRepositories;
+using BookingSystem.Repositories;
+using BookingSystem.Interfaces.IServices;
+using BookingSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +17,12 @@ builder.Services.AddSwaggerGen();
 //Register DbContext
 var ConnectionString = builder.Configuration.GetConnectionString("applicationDbConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(ConnectionString));
+
+//Dependency Injection( Register Services and repositories)
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IValidationService, ValidationService>();
+builder.Services.AddScoped<IHashPasswordService, HashPasswordService>();
 
 var app = builder.Build();
 

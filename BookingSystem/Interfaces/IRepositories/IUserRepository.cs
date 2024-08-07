@@ -1,9 +1,9 @@
 ﻿using BookingSystem.DTO.InternalDTO;
 using BookingSystem.Models;
 
-namespace BookingSystem.Interfaces.IServices
+namespace BookingSystem.Interfaces.IRepositories
 {
-    public interface IUserService
+    public interface IUserRepository
     {
         public Task<GeneralResponseInternalDTO> UserExist(string Email);
 
