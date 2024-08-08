@@ -19,9 +19,18 @@ namespace BookingSystem.Repositories
             try
             {
                 var existingUser =  await _context.Users.FirstOrDefaultAsync(u => u.Email == Email);
-                await _context.SaveChangesAsync();
-                var response = new GeneralResponseInternalDTO(true, "User Found", existingUser);
-                return response;
+
+                // Return appropriate response based on the existence of the user
+                if (existingUser != null)
+                {
+                    var response = new GeneralResponseInternalDTO(true, "Email already exists", existingUser);
+                    return response;
+                }
+                else
+                {
+                    var response = new GeneralResponseInternalDTO(false, "Email does not exist");
+                    return response;
+                }
 
             }
             catch (Exception ex)

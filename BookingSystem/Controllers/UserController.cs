@@ -49,13 +49,13 @@ namespace BookingSystem.Controllers
                 }
 
                 var hashedPasswordResponse = await _hashPasswordService.HashPassword(request.Password);
-                if (hashedPasswordResponse.Status)
+                if (!hashedPasswordResponse.Status)
                 {
                     var response = new GeneralResposnseDTO(hashedPasswordResponse.Status, "Failed to hash password");
                     return BadRequest(response);
                 }
 
-                var hashedPassword = hashedPasswordResponse.Data as string;
+                var hashedPassword = hashedPasswordResponse.Message;
 
                 UserModel user = new UserModel();
 
