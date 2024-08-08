@@ -1,4 +1,5 @@
 ﻿using BookingSystem.DTO;
+using BookingSystem.DTO.InternalDTO;
 using BookingSystem.Interfaces.IServices;
 using BookingSystem.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -12,16 +13,19 @@ namespace BookingSystem.Controllers
         private readonly IValidationService _validationService;
         private readonly IUserService _userService;
         private readonly IHashPasswordService _hashPasswordService;
+        private readonly IJWTService _jwtService;
 
         public UserController(
             IValidationService validationService,
             IUserService userService,
-            IHashPasswordService hashPasswordService
+            IHashPasswordService hashPasswordService,
+            IJWTService jWTService
             ) 
         {
             _validationService = validationService;
             _userService = userService;
             _hashPasswordService = hashPasswordService;
+            _jwtService = jWTService;
         }
 
         [HttpPost("create-user", Name = "CreateUser")]
@@ -74,6 +78,64 @@ namespace BookingSystem.Controllers
             {
                 GeneralResposnseDTO rsponse = new GeneralResposnseDTO(false, ex.Message);
                 return BadRequest(rsponse);
+            }
+        }
+
+        [HttpPost("login-user", Name = "LoginUser")]
+        public async Task<IActionResult> LoginUser(UserLoginDTO request)
+        {
+            try
+            {
+                var passwordValidation = await _validationService.ValidatePassword(request.Password);
+                if (!passwordValidation.Status)
+                {
+                    return BadRequest(passwordValidation);
+                }
+
+                var emailValidation = await _validationService.ValidateEmail(request.Email);
+                if (!emailValidation.Status)
+                {
+                    return BadRequest(emailValidation);
+                }
+
+                var existingUser = await _userService.UserExist(request.Email);
+                if (!existingUser.Status)
+                {
+                    var response = new GeneralResposnseDTO(existingUser.Status, existingUser.Message);
+                    return BadRequest(response);
+                }
+
+                if (existingUser?.Data is UserModel userData)
+                {
+                    var authenticationResult = await _userService.AuthenticateUser(request.Password, userData.PasswordHash);
+                    if (authenticationResult.Status)
+                    {
+                        var JWTToken = await _jwtService.GenerateJwtToken(userData);
+                        if (JWTToken.Status)
+                        {
+                            return Ok(new GeneralResponseInternalDTO(JWTToken.Status, JWTToken.Message, JWTToken.Data));
+                        }
+                        else
+                        {
+                            return BadRequest(JWTToken);
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest(authenticationResult);
+                    }
+                }
+                else
+                {
+                    var response = new GeneralResposnseDTO(false, "Invalid User data format");
+                    return BadRequest(response);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                GeneralResposnseDTO response = new GeneralResposnseDTO(false, ex.Message);
+                return BadRequest(response);
             }
         }
     }
