@@ -8,10 +8,12 @@ namespace BookingSystem.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IHashPasswordService _hashPasswordService;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IHashPasswordService hashPasswordService)
         {
             _userRepository = userRepository;
+            _hashPasswordService = hashPasswordService;
         }
 
         public async Task<GeneralResponseInternalDTO> UserExist(string Email)
@@ -33,6 +35,20 @@ namespace BookingSystem.Services
             try
             {
                 var result = await _userRepository.CreateUser(user);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                var response = new GeneralResponseInternalDTO(false, ex.Message);
+                return response;
+            }
+        }
+
+        public async Task<GeneralResponseInternalDTO> AuthenticateUser(string reqPassword, string hashedPassword)
+        {
+            try
+            {
+                var result = await _hashPasswordService.VerifyPassword(reqPassword, hashedPassword);
                 return result;
             }
             catch (Exception ex)

@@ -6,6 +6,6 @@ namespace BookingSystem.Interfaces.IServices
     {
         public Task<GeneralResponseInternalDTO> HashPassword(string password);
 
-        //public Task<GeneralResponseInternalDTO> VerifyPassword(object user, string password);
+        public Task<GeneralResponseInternalDTO> VerifyPassword(string password, string PasswordHash);
     }
 }
