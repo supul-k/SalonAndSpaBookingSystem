@@ -1,5 +1,6 @@
 ﻿using BookingSystem.DTO;
 using BookingSystem.DTO.InternalDTO;
+using BookingSystem.Interfaces.IRepositories;
 using BookingSystem.Interfaces.IServices;
 using BookingSystem.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +15,21 @@ namespace BookingSystem.Controllers
         private readonly IUserService _userService;
         private readonly IHashPasswordService _hashPasswordService;
         private readonly IJWTService _jwtService;
+        private readonly IUserProfileService _userProfileService;
 
         public UserController(
             IValidationService validationService,
             IUserService userService,
             IHashPasswordService hashPasswordService,
-            IJWTService jWTService
+            IJWTService jWTService,
+            IUserProfileService userProfileService
             ) 
         {
             _validationService = validationService;
             _userService = userService;
             _hashPasswordService = hashPasswordService;
             _jwtService = jWTService;
+            _userProfileService = userProfileService;
         }
 
         [HttpPost("create-user", Name = "CreateUser")]
@@ -70,9 +74,31 @@ namespace BookingSystem.Controllers
                 user.PasswordHash = hashedPassword;
                 user.PhoneNumber = request.PhoneNumber;
                 user.Role = request.Role;
-                var result = await _userService.CreateUser(user);
+                user.CreatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow;
 
-                return result.Status ? Created("User Created Successfully", result) : BadRequest(result);
+                var result = await _userService.CreateUser(user);
+                if (!result.Status)
+                {
+                    return BadRequest(result);
+                }
+
+                UserProfileModel profile = new UserProfileModel
+                {
+                    UserProfileId = Guid.NewGuid().ToString(),
+                    UserId = user.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                var userProfileResult = await _userProfileService.CreateUserProfile(profile);
+                if (!userProfileResult.Status)
+                {
+                    return BadRequest(userProfileResult);
+                }
+
+                return Created("User Created Successfully", new { result, userProfileResult });
+
             }
             catch (Exception ex)
             {

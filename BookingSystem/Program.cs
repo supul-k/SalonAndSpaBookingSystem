@@ -27,6 +27,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IValidationService, ValidationService>();
 builder.Services.AddScoped<IHashPasswordService, HashPasswordService>();
 builder.Services.AddScoped<IJWTService, JWTService>();
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 
 //jwt configurations
 var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();

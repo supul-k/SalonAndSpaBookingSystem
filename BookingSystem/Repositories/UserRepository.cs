@@ -19,24 +19,17 @@ namespace BookingSystem.Repositories
             try
             {
                 var existingUser =  await _context.Users.FirstOrDefaultAsync(u => u.Email == Email);
+                if (existingUser == null)
+                {
+                    return new GeneralResponseInternalDTO(false, "User does not exist");
+                }
 
-                // Return appropriate response based on the existence of the user
-                if (existingUser != null)
-                {
-                    var response = new GeneralResponseInternalDTO(true, "Email already exists", existingUser);
-                    return response;
-                }
-                else
-                {
-                    var response = new GeneralResponseInternalDTO(false, "Email does not exist");
-                    return response;
-                }
+                return new GeneralResponseInternalDTO(true, "User already exists", existingUser);                
 
             }
             catch (Exception ex)
             {
-                GeneralResponseInternalDTO response =  new GeneralResponseInternalDTO(false, ex.Message);
-                return response;
+                return  new GeneralResponseInternalDTO(false, ex.Message);
             }
         }
 
@@ -47,13 +40,11 @@ namespace BookingSystem.Repositories
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                var response = new GeneralResponseInternalDTO(true, "User created successfully");
-                return response;
+                return new GeneralResponseInternalDTO(true, "User created successfully");                
             }
             catch (Exception ex)
             {
-                var response = new GeneralResponseInternalDTO(false, ex.Message);
-                return response;
+                return new GeneralResponseInternalDTO(false, ex.Message);
             }
         }
     }
