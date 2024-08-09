@@ -6,9 +6,6 @@ namespace BookingSystem.DTO
     public class UserRegisterRequestDTO
     {
         [Required]
-        public string Id { get; set; }
-
-        [Required]
         public string FirstName { get; set; }
 
         [Required]
