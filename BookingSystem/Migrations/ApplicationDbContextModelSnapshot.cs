@@ -432,17 +432,14 @@ namespace BookingSystem.Migrations
                         .HasColumnName("UserProfileId");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(300)")
                         .HasColumnName("Address");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("City");
 
                     b.Property<string>("Country")
-                        .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("Country");
 
@@ -450,12 +447,10 @@ namespace BookingSystem.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ProfilePictureUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("ProfilePictureUrl");
 
                     b.Property<string>("State")
-                        .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("State");
 
@@ -468,7 +463,6 @@ namespace BookingSystem.Migrations
                         .HasColumnName("UserId");
 
                     b.Property<string>("ZipCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("ZipCode");
 

@@ -83,21 +83,21 @@ namespace BookingSystem.Controllers
                     return BadRequest(result);
                 }
 
-                UserProfileModel profile = new UserProfileModel
-                {
-                    UserProfileId = Guid.NewGuid().ToString(),
-                    UserId = user.Id,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
+                //UserProfileModel profile = new UserProfileModel
+                //{
+                //    UserProfileId = Guid.NewGuid().ToString(),
+                //    UserId = user.Id,
+                //    CreatedAt = DateTime.UtcNow,
+                //    UpdatedAt = DateTime.UtcNow
+                //};
 
-                var userProfileResult = await _userProfileService.CreateUserProfile(profile);
-                if (!userProfileResult.Status)
-                {
-                    return BadRequest(userProfileResult);
-                }
+                //var userProfileResult = await _userProfileService.CreateUserProfile(profile);
+                //if (!userProfileResult.Status)
+                //{
+                //    return BadRequest(userProfileResult);
+                //}
 
-                return Created("User Created Successfully", new { result, userProfileResult });
+                return Created( string.Empty, new GeneralResposnseDTO(true, result.Message));
 
             }
             catch (Exception ex)

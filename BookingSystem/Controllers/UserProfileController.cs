@@ -1,4 +1,5 @@
 ﻿using BookingSystem.DTO;
+using BookingSystem.DTO.InternalDTO;
 using BookingSystem.Interfaces.IRepositories;
 using BookingSystem.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -41,28 +42,53 @@ namespace BookingSystem.Controllers
         {
             try
             {
-                var userProfileResult = await _userProfileService.UserProfileExist(request.UserId);
+                var userProfileResult = await _userProfileService.UserProfileExist(request.UserId);                
+                UserProfileModel userProfile;
+                GeneralResponseInternalDTO result;
+
                 if (!userProfileResult.Status)
                 {
-                    return BadRequest(userProfileResult);
+                    // UserProfile does not exist, create a new one
+                    userProfile = new UserProfileModel
+                    {
+                        UserProfileId = Guid.NewGuid().ToString(),
+                        UserId = request.UserId,
+                        Address = request.Address,
+                        City = request.City,
+                        State = request.State,
+                        ZipCode = request.ZipCode,
+                        Country = request.Country,
+                        ProfilePictureUrl = request.ProfilePictureUrl,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+
+                    result = await _userProfileService.CreateUserProfile(userProfile);
+                    if (!result.Status)
+                    {
+                        return BadRequest(result);
+                    }
                 }
-
-                var existingUserProfile = userProfileResult.Data as UserProfileModel;
-
-                if (!string.IsNullOrEmpty(request.Address)) existingUserProfile.Address = request.Address;
-                if (!string.IsNullOrEmpty(request.City)) existingUserProfile.City = request.City;
-                if (!string.IsNullOrEmpty(request.State)) existingUserProfile.State = request.State;
-                if (!string.IsNullOrEmpty(request.ZipCode)) existingUserProfile.ZipCode = request.ZipCode;
-                if (!string.IsNullOrEmpty(request.Country)) existingUserProfile.Country = request.Country;
-                if (!string.IsNullOrEmpty(request.ProfilePictureUrl)) existingUserProfile.ProfilePictureUrl = request.ProfilePictureUrl;
-
-                existingUserProfile.UpdatedAt = DateTime.UtcNow;
-
-                var result = await _userProfileService.UpdateUserProfile(existingUserProfile);
-                if (!result.Status)
+                else
                 {
-                    return BadRequest(result);
-                }
+                    // UserProfile exists, update it
+                    userProfile = userProfileResult.Data as UserProfileModel;
+
+                    if (!string.IsNullOrEmpty(request.Address)) userProfile.Address = request.Address;
+                    if (!string.IsNullOrEmpty(request.City)) userProfile.City = request.City;
+                    if (!string.IsNullOrEmpty(request.State)) userProfile.State = request.State;
+                    if (!string.IsNullOrEmpty(request.ZipCode)) userProfile.ZipCode = request.ZipCode;
+                    if (!string.IsNullOrEmpty(request.Country)) userProfile.Country = request.Country;
+                    if (!string.IsNullOrEmpty(request.ProfilePictureUrl)) userProfile.ProfilePictureUrl = request.ProfilePictureUrl;
+
+                    userProfile.UpdatedAt = DateTime.UtcNow;  // Update only once
+
+                    result = await _userProfileService.UpdateUserProfile(userProfile);
+                    if (!result.Status)
+                    {
+                        return BadRequest(result);
+                    }
+                }              
 
                 return Ok(result);
             }

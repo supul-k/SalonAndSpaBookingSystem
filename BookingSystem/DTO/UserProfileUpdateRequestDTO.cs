@@ -5,7 +5,7 @@ namespace BookingSystem.DTO
     public class UserProfileUpdateRequestDTO
     {
         [Required]
-        public string? UserId { get; set; }
+        public string UserId { get; set; }
 
         public string? Address { get; set; }
 

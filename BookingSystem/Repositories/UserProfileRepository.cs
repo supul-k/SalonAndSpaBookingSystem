@@ -22,8 +22,7 @@ namespace BookingSystem.Repositories
                 await _context.UserProfiles.AddAsync(profile);
                 await _context.SaveChangesAsync();
 
-                var response = new GeneralResponseInternalDTO(true, "User Profile Created Successfully");
-                return response;
+                return new GeneralResponseInternalDTO(true, "User Profile Created Successfully");
             }
             catch (Exception ex)
             {
