@@ -103,12 +103,12 @@ namespace BookingSystem.Migrations
                 {
                     UserProfileId = table.Column<string>(type: "nvarchar(36)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(36)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(300)", nullable: false),
-                    City = table.Column<string>(type: "nvarchar(100)", nullable: false),
-                    State = table.Column<string>(type: "nvarchar(100)", nullable: false),
-                    ZipCode = table.Column<string>(type: "nvarchar(20)", nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(100)", nullable: false),
-                    ProfilePictureUrl = table.Column<string>(type: "nvarchar(200)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(300)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(100)", nullable: true),
+                    State = table.Column<string>(type: "nvarchar(100)", nullable: true),
+                    ZipCode = table.Column<string>(type: "nvarchar(20)", nullable: true),
+                    Country = table.Column<string>(type: "nvarchar(100)", nullable: true),
+                    ProfilePictureUrl = table.Column<string>(type: "nvarchar(200)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
